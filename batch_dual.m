@@ -2,11 +2,13 @@
 Neural Net with single hidden layer of one neuron to perform linear
 regression using batches of varying size.
 
-Linear activation or sigmoid function.
+True solution to the regression problem is linear relationship with zero
+intercept. i.e., y(x) = x.
 
-NOTE: CHOICE BETWEEN/FUNCTION OF ACTIVATION FUNCTION, LINEAR OR SIGMOID?
-ADD IN RELU TOO?
-
+Choice of activation function:
+    - linear: 
+    - sigmoid:
+    - ReLU:
 %} 
 
 
@@ -18,6 +20,12 @@ ADD IN RELU TOO?
 adapt = 'True';
 
 
+% Parameters for changing learning rate.
+if(isequal(adapt,'True'))
+    e_R = 2; % factor by which to divide learning rate
+    N_R = 4; % how often to reduce learning rate
+end
+
 % Seed random number generator.
 rng(080992)
 
@@ -27,11 +35,20 @@ W = rand(1);
 b = rand(1);
 
 
-% Parameters for changing learning rate.
-if(isequal(adapt,'True'))
-    e_R = 2; % factor by which to divide learning rate
-    N_R = 4; % how often to reduce learning rate
-end
+
+%% ACTIVATION FUNCTION:
+
+
+act_type = 'linear'; % 'sigmoid', 'ReLU'
+
+my_act = @(x, W, b) activate(x, W, b, act_type);
+
+%sigmoid = @(x, W, b) 1./(1+exp(-(W*x+b)));
+%d_sigmoid = @(a) a*(1-a);
+
+% Activation function - linear
+linear = @(x, W, b) W*x+b;
+d_linear = @(a) 1;
 
 
 
@@ -52,26 +69,15 @@ param = A\y';
 plotting_data = 1;
 if(plotting_data == 1)
     figure()
-    plot(x, y, 'xk', 'linewidth',20)
+    plot(x, y, 'xk', 'markersize',10, 'linewidth',2)
     hold on
     plot(x, param(1)*x + param(2), 'r', 'linewidth',1.5)
     xlabel('$x$', 'interpreter','latex', 'fontsize',17)
     ylabel('$y$', 'interpreter','latex', 'fontsize',17)
     legend({'Data Points', 'Least Squares Fit'}, 'interpreter','latex', 'fontsize',17, 'location', 'best')
-    title('Data and Least Squares Solution', 'interpreter','latex', 'fontsize',20)
+    title('Data and (Ordinary) Least Squares Solution', 'interpreter','latex', 'fontsize',20)
     hold off
 end
-
-
-
-%% ACTIVATION FUNCTION:
-
-%sigmoid = @(x, W, b) 1./(1+exp(-(W*x+b)));
-%d_sigmoid = @(a) a*(1-a);
-
-% Activation function - linear
-linear = @(x, W, b) W*x+b;
-d_linear = @(a) 1;
 
 
 
@@ -99,21 +105,25 @@ for iterations = 2:Niter
     W_stochastic(iterations) = W_stochastic(iterations-1) - eta*delta*x(i);
     b_stochastic(iterations) = b_stochastic(iterations-1) - eta*delta;
     
-    if(mod(iterations, floor(Niter/N_R)) == 0)
-        eta = eta/e_R;
+    
+    if(isequal(adapt,'True'))
+        if(mod(iterations, floor(Niter/N_R)) == 0)
+            eta = eta/e_R;
+        end
     end
 end
 
 
 % Plot training path.
 figure
-plot(W_stochastic, b_stochastic)
+plot(W_stochastic, b_stochastic, 'linewidth',1.5)
 hold on
 plot(param(1), param(2), 'kx', 'markersize', 20, 'linewidth', 4)
 hold off
-title('Stochastic')
-ylabel('bias, b')
-xlabel('weight, W')
+title('Stochastic Gradient Descent', 'interpreter','latex', 'fontsize',20)
+ylabel('Bias, b', 'interpreter','latex', 'fontsize',17)
+xlabel('Weight, W', 'interpreter','latex', 'fontsize',17)
+legend({'Training Path','OLS Solution'}, 'interpreter','latex', 'fontsize',17, 'location','best')
 
 
 
@@ -160,20 +170,23 @@ for iterations = 2:Niter
     W_mini(iterations) = W_mini(iterations-1) - eta*delta_w;
     b_mini(iterations) = b_mini(iterations-1) - eta*delta_b;
     
-    if(mod(iterations, floor(Niter/N_R)) == 0)
-        eta = eta/e_R;
+    
+    if(isequal(adapt,'True'))
+        if(mod(iterations, floor(Niter/N_R)) == 0)
+            eta = eta/e_R;
+        end
     end
 end
 
 figure
-plot(W_mini, b_mini)
+plot(W_mini, b_mini, 'linewidth',1.5)
 hold on
 plot(param(1), param(2), 'kx', 'markersize', 20, 'linewidth', 4)
 hold off
-title('Mini Batch')
-ylabel('bias, b')
-xlabel('weight, W')
-
+title('Mini Batch', 'interpreter','latex', 'fontsize',20)
+ylabel('Bias, b', 'interpreter','latex', 'fontsize',17)
+xlabel('Weight, W', 'interpreter','latex', 'fontsize',17)
+legend({'Training Path','OLS Solution'}, 'interpreter','latex', 'fontsize',17, 'location','best')
 
 
 %% METHOD 3 - Full Batch:
@@ -213,30 +226,34 @@ for iterations = 2:Niter
     W_batch(iterations) = W_batch(iterations-1) - eta*delta_w;
     b_batch(iterations) = b_batch(iterations-1) - eta*delta_b;
     
-    if(mod(iterations, floor(Niter/N_R)) == 0)
-        eta = eta/e_R;
+
+    if(isequal(adapt,'True'))
+        if(mod(iterations, floor(Niter/N_R)) == 0)
+            eta = eta/e_R;
+        end
     end  
 end
 
 figure
-plot(W_batch, b_batch)
+plot(W_batch, b_batch, 'linewidth',.15)
 hold on
 plot(param(1), param(2), 'kx', 'markersize', 20, 'linewidth', 4)
 hold off
-title('Batch')
-ylabel('bias, b')
-xlabel('weight, W')
+title('Batch', 'interpreter','latex', 'fontsize',20)
+ylabel('Bias, b', 'interpreter','latex', 'fontsize',17)
+xlabel('Weight, W', 'interpreter','latex', 'fontsize',17)
+legend({'Training Path','OLS Solution'}, 'interpreter','latex', 'fontsize',17, 'location','best')
 
 
 
 %% PLOT PATHS:
 
 figure
-plot(W_stochastic, b_stochastic)
+plot(W_stochastic, b_stochastic, 'linewidth',1.5)
 hold on
-plot(W_mini, b_mini)
-plot(W_batch, b_batch)
+plot(W_mini, b_mini, 'linewidth',1.5)
+plot(W_batch, b_batch, 'linewidth',1.5)
 plot(param(1), param(2), 'kx', 'markersize', 20, 'linewidth', 4)
-legend('Stochastic', 'Mini Batch', '(Full) Batch')
-ylabel('bias, b')
-xlabel('weight, W')
+legend({'Stochastic', 'Mini Batch', '(Full) Batch'}, 'interpreter','latex', 'fontsize',17)
+ylabel('bias, b', 'interpreter','latex', 'fontsize',17)
+xlabel('weight, W', 'interpreter','latex', 'fontsize',17)
