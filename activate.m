@@ -23,6 +23,9 @@ OUTPUTS:
   y -- output vector {vector in R^{r}},
  dy -- derivative of activation function at these points {vector in R^{r}}.
 ---------------------------------------------------------------------------
+
+Written by: James Rynn
+Last edited: 18/12/2019
 %}
 
 

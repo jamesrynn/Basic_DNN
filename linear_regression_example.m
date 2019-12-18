@@ -12,7 +12,10 @@ Choice of activation function:
     - ReLU (rectified linear unit)
     - leaky ReLU (leaky rectified linear unit)
     - ELU (exponential linear unit)
-%} 
+
+Written by: James Rynn
+Last edited: 18/12/2019
+%}
 
 
 

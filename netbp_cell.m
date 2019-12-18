@@ -22,6 +22,11 @@ OUTPUTS:
 ---------------------------------------------------------------------------
    t_train -- time taken to train network {scalar}.
 ---------------------------------------------------------------------------
+
+Written by: C F Higham and D J Higham, August 2017
+Available at: https://arxiv.org/abs/1801.05894
+Adapted by: James Rynn
+Last edited: 18/12/2019
 %}
 
 
@@ -29,8 +34,8 @@ OUTPUTS:
 rng(RNG)
 
 
-% DATA:
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% DATA:
+
 % Data for Figure 4/8.
 if(isequal(data,'paper10')==1)
     x1 = [0.1,0.3,0.1,0.6,0.4,0.6,0.5,0.9,0.4,0.7];
@@ -46,19 +51,19 @@ end
 
 % Number of data points.
 N  = length(x1);
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-% DEFINE NET:
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% DEFINE NET:
+
 % Number of neurons at each layer.
 % N.B. data and output are each dimension 2.
 nlv = [2, hid_layers, 2];
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-% PLOT DATA:
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% PLOT DATA:
+
 if(plot_data == 1)
     figure
     a1 = subplot(1,1,1);
@@ -72,12 +77,10 @@ if(plot_data == 1)
     xlim([0,1])
     ylim([0,1])
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
-% WEIGHTS AND BIASES:
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% WEIGHTS AND BIASES:
 
 % Number of layers (including input).
 L = length(nlv);
@@ -88,12 +91,10 @@ for l = 2:L
     Wb{l,1} = 0.5*randn(nlv(l), nlv(l-1));
     Wb{l,2} = 0.5*randn(nlv(l), 1);
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
-% FORWARD AND BACK PROPOGATION
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% FORWARD AND BACK PROPOGATION
 
 % Vector of costs (for plotting)
 if(track_cost == 1)
@@ -146,6 +147,7 @@ for n = 1:Niter
         end
     end
     
+    
     % Gradient step.
      sum_grad_C = cell(L,2);
     mean_grad_C = cell(L,2);
@@ -160,6 +162,7 @@ for n = 1:Niter
         mean_grad_C{l,2} = sum_grad_C{l,2}/M;
     end
     
+    
     % Update weights and biases.
     for l = 2:L
         Wb{l,1} = Wb{l,1} - eta*mean_grad_C{l,1};
@@ -171,6 +174,7 @@ for n = 1:Niter
     if(floor(100*n/Niter)>floor(100*(n-1)/Niter))
         fprintf('Progess: %u / %u iterations (%g%%). Estimated time remaining: %.3g seconds.\n', n, Niter, round(100*n/Niter), toc*((Niter/n)-1));
     end
+    
     
     % Track cost if required.
     if(track_cost == 1)
@@ -185,12 +189,11 @@ end
 
 % Time taken to train network.
 t_train = toc;
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
-% PLOT COST DECREASE:
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% PLOT COST DECREASE:
+
 if(track_cost == 1)
     figure
     semilogy([1:1e4:Niter],savecost(1:1e4:Niter),'b-','LineWidth',2)
@@ -198,13 +201,11 @@ if(track_cost == 1)
     ylabel('Value of cost function')
     set(gca,'FontWeight','Bold','FontSize',18)
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
+%% PLOT RESULTS:
 
-% PLOT RESULTS:
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 NN = 500;
 Dx = 1/NN;
 Dy = 1/NN;
@@ -242,14 +243,11 @@ a2.FontWeight = 'Bold';
 a2.FontSize = 16;
 xlim([0,1])
 ylim([0,1])
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 end
 
 
 
-% COST SUBFUNCTION:
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% COST SUBFUNCTION:
 function [costval] = cost(fn_type, Wb, nlv, x1,x2, y)
 
 % Number of layers
@@ -271,4 +269,3 @@ for i = 1:N
 end
 costval = norm(costvec,2)^2;
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

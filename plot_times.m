@@ -1,5 +1,11 @@
-% Plot time taken to train versus number of iterations performed,
-% indicating whether or not the solution is 'acceptable'.
+%{
+Plot time taken to train versus number of iterations performed,
+indicating whether or not the solution is 'acceptable'.
+All performed using sigmoid activation function.
+
+Written by: James Rynn
+Last edited: 18/12/2019
+%}
 
 
 % Numbers of iterations.
