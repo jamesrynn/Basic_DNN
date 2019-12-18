@@ -1,4 +1,4 @@
-function [t_train] = netbp_cell(data, hid_layers, M, Niter, eta, plot_data, track_cost, RNG)
+function [t_train] = netbp_cell(data, fn_type, hid_layers, M, Niter, eta, plot_data, track_cost, RNG)
 %{
 NETBP_CELL
 ---------------------------------------------------------------------------
@@ -124,15 +124,19 @@ for n = 1:Niter
         % Forward pass.
         a = cell(L,1);
         a{1} = x;
+        D = cell(L,1);
+        D{1} = eye(length(x)); % un-used
         for l = 2:L
-            a{l} = activate(a{l-1}, Wb{l,1}, Wb{l,2});
+            [act_y, act_dy] = activate(a{l-1}, Wb{l,1}, Wb{l,2}, fn_type);
+            a{l} = act_y;
+            D{l} = diag(act_dy);
         end
         
-        % Backward pass --- GENERALISE THIS!
+        % Backward pass.
         delta = cell(L,1);
-        delta{L} = a{L}.*(1-a{L}).*(a{L}-y(:,k(m)));
+        delta{L} = D{L}*(a{L}-y(:,k(m)));
         for l = L-1:-1:2
-            delta{l} = a{l}.*(1-a{l}).*(Wb{l+1,1}'*delta{l+1});
+            delta{l} = D{l}*(Wb{l+1,1}'*delta{l+1});
         end
         
         % Store gradient for current data point x_k(m).
@@ -164,16 +168,16 @@ for n = 1:Niter
     
     
     % Output progress message.
-    if(round(100*n/Niter)>round(100*(n-1)/Niter))
+    if(floor(100*n/Niter)>floor(100*(n-1)/Niter))
         fprintf('Progess: %u / %u iterations (%g%%). Estimated time remaining: %.3g seconds.\n', n, Niter, round(100*n/Niter), toc*((Niter/n)-1));
     end
     
     % Track cost if required.
     if(track_cost == 1)
         if(mod(n,Niter/100)==0)
-            newcost = cost(Wb, nlv, x1,x2, y)   % Occaisonally display cost to screen.
+            newcost = cost(fn_type, Wb, nlv, x1,x2, y)   % Occaisonally display cost to screen.
         else
-            newcost = cost(Wb, nlv, x1,x2, y);
+            newcost = cost(fn_type, Wb, nlv, x1,x2, y);
         end
         savecost(n) = newcost;
     end
@@ -214,7 +218,7 @@ for k1 = 1:NN+1
         yk = yvals(k2);
         a = [xk; yk];
         for l = 2:L
-            a = activate(a, Wb{l,1}, Wb{l,2});
+            a = activate(a, Wb{l,1}, Wb{l,2}, fn_type);
         end
         
         Aval(k2,k1) = a(1);
@@ -246,7 +250,7 @@ end
 
 % COST SUBFUNCTION:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [costval] = cost(Wb, nlv, x1,x2, y)
+function [costval] = cost(fn_type, Wb, nlv, x1,x2, y)
 
 % Number of layers
 L = length(nlv);
@@ -261,7 +265,7 @@ for i = 1:N
     x =[x1(i);x2(i)];
     a = x;
     for l = 2:L
-        a = activate(a, Wb{l,1}, Wb{l,2});
+        a = activate(a, Wb{l,1}, Wb{l,2}, fn_type);
     end
     costvec(i) = norm(y(:,i) - a,2);
 end

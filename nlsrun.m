@@ -8,6 +8,8 @@ function nlsrun
 % C F Higham and D J Higham, August 2017
 %
 %%%%%%% DATA %%%%%%%%%%%
+fn_type = 'sigmoid';
+
 % coordinates and targets
 x1 = [0.1,0.3,0.1,0.6,0.4,0.6,0.5,0.9,0.4,0.7];
 x2 = [0.1,0.4,0.5,0.9,0.2,0.3,0.6,0.2,0.4,0.6];
@@ -33,7 +35,7 @@ print -dpng pic_xy.png
 rng(5000);
 Pzero = 0.5*randn(23,1);
 
-[finalP,finalerr] = lsqnonlin(@neterr,Pzero);
+[finalP,finalerr] = lsqnonlin(@(x) neterr(x, fn_type),Pzero);
 
 % Check this function 
 finalW2 = zeros(2,2);
@@ -57,9 +59,9 @@ for k1 = 1:N+1
     for k2 = 1:N+1
         yk = yvals(k2);
         xy = [xk;yk];
-        a2 = activate(xy,finalW2,finalb2);
-        a3 = activate(a2,finalW3,finalb3);
-        a4 = activate(a3,finalW4,finalb4);
+        a2 = activate(xy,finalW2,finalb2,fn_type);
+        a3 = activate(a2,finalW3,finalb3,fn_type);
+        a4 = activate(a3,finalW4,finalb4,fn_type);
         Aval(k2,k1) = a4(1);
         Bval(k2,k1) = a4(2);
      end
@@ -85,7 +87,7 @@ ylim([0,1])
 
 print -dpng pic_bdy.png
 
-  function costvec = neterr(Pval)
+  function costvec = neterr(Pval,fn_type)
   % return a vector whose two-norm squared is the cost function  
      disp('new call')
 
@@ -102,9 +104,9 @@ print -dpng pic_bdy.png
      costvec = zeros(10,1); 
      for i = 1:10
          x = [x1(i);x2(i)];
-         a2 = activate(x,W2,b2);
-         a3 = activate(a2,W3,b3);
-         a4 = activate(a3,W4,b4);
+         a2 = activate(x,W2,b2,fn_type);
+         a3 = activate(a2,W3,b3,fn_type);
+         a4 = activate(a3,W4,b4,fn_type);
          costvec(i) = norm(y(:,i) - a4,2);
      end
      end % of nested function

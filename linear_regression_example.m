@@ -6,9 +6,12 @@ True solution to the regression problem is linear relationship with zero
 intercept. i.e., y(x) = x.
 
 Choice of activation function:
-    - linear: 
-    - sigmoid:
-    - ReLU:
+    - linear
+    - sigmoid
+    - tanh
+    - ReLU (rectified linear unit)
+    - leaky ReLU (leaky rectified linear unit)
+    - ELU (exponential linear unit)
 %} 
 
 
@@ -38,17 +41,8 @@ b = rand(1);
 
 %% ACTIVATION FUNCTION:
 
-
-act_type = 'linear'; % 'sigmoid', 'ReLU'
-
-my_act = @(x, W, b) activate(x, W, b, act_type);
-
-%sigmoid = @(x, W, b) 1./(1+exp(-(W*x+b)));
-%d_sigmoid = @(a) a*(1-a);
-
-% Activation function - linear
-linear = @(x, W, b) W*x+b;
-d_linear = @(a) 1;
+% Choose from types:  linear, sigmoid, hyp_tan, ELU, ReLU, leaky_ReLU.
+fn_type = 'hyp_tan'; 
 
 
 
@@ -96,10 +90,10 @@ for iterations = 2:Niter
     i = randi(length(x), 1);
     
     % Forward pass
-    a2 = linear(x(i), W_stochastic(iterations-1), b_stochastic(iterations-1));
+    [a2, D2] = activate(x(i), W_stochastic(iterations-1), b_stochastic(iterations-1), fn_type);
     
     % Backward pass
-    delta = d_linear(a2)*(a2-y(i));
+    delta = D2*(a2-y(i));
     
     % Update weights
     W_stochastic(iterations) = W_stochastic(iterations-1) - eta*delta*x(i);
@@ -152,10 +146,10 @@ for iterations = 2:Niter
     for i = 1:mini_batch
         
         % Forward pass
-        a2 = linear(x(perm(i)), W_mini(iterations-1), b_mini(iterations-1));
+        [a2, D2] = activate(x(perm(i)), W_mini(iterations-1), b_mini(iterations-1), fn_type);
         
         % Backward pass
-        delta = d_linear(a2)*(a2-y(perm(i)));
+        delta = D2*(a2-y(perm(i)));
         
         % Sum update terms.
         delta_w = delta_w + delta*x(perm(i));
@@ -189,6 +183,7 @@ xlabel('Weight, W', 'interpreter','latex', 'fontsize',17)
 legend({'Training Path','OLS Solution'}, 'interpreter','latex', 'fontsize',17, 'location','best')
 
 
+
 %% METHOD 3 - Full Batch:
 
 Niter = 3e3;
@@ -208,10 +203,10 @@ for iterations = 2:Niter
     for i = 1:length(x)
         
         % Forward pass.
-        a2 = linear(x(i), W_batch(iterations-1), b_batch(iterations-1));
+        [a2, D2] = activate(x(i), W_batch(iterations-1), b_batch(iterations-1), fn_type);
         
         % Backward pass.
-        delta = d_linear(a2)*(a2-y(i));
+        delta = D2*(a2-y(i));
         
         % Sum update terms.
         delta_w = delta_w + delta*x(i);
@@ -257,3 +252,19 @@ plot(param(1), param(2), 'kx', 'markersize', 20, 'linewidth', 4)
 legend({'Stochastic', 'Mini Batch', '(Full) Batch'}, 'interpreter','latex', 'fontsize',17)
 ylabel('bias, b', 'interpreter','latex', 'fontsize',17)
 xlabel('weight, W', 'interpreter','latex', 'fontsize',17)
+
+
+
+%% PLOT PREDICTIONS:
+
+figure
+plot(x,y,'xk', 'markersize',10, 'linewidth',2)
+hold on
+plot(x, activate(x, W_stochastic(end), b_stochastic(end), fn_type), 'linewidth',1.5)
+plot(x, activate(x, W_mini(end),       b_mini(end),       fn_type), 'linewidth',1.5)
+plot(x, activate(x, W_batch(end),      b_batch(end),      fn_type), 'linewidth',1.5)
+hold off
+title('Predictions', 'interpreter','latex', 'fontsize',20)
+xlabel('$x$', 'interpreter','latex', 'fontsize',17)
+ylabel('$y$', 'interpreter','latex', 'fontsize',17)
+legend({'Data', 'Stochastic', 'Mini Batch', '(Full) Batch'}, 'interpreter','latex', 'fontsize',17)
