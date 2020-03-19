@@ -48,7 +48,6 @@ if(plot_data == 1)
     plot(x1(6:end),x2(6:end),'bx','MarkerSize',8,'LineWidth',1.5)
     a1.XTick = [0 1];
     a1.YTick = [0 1];
-    a1.FontWeight = 'Bold';
     a1.FontSize = 16;
     xlim([0,1])
     ylim([0,1])

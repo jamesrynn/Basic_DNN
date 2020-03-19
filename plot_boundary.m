@@ -72,17 +72,15 @@ end
 % Note, assumes first 5 entries of x1,x2 are type A and the rest are type B.
 
 figure
-clf
 a2 = subplot(1,1,1);
 Mval = Aval>Bval;
 contourf(X,Y,Mval,[0.5 0.5])
 hold on
 colormap([1 1 1; 0.8 0.8 0.8])
-plot(x1(1:5),x2(1:5),'ro','MarkerSize',10,'LineWidth',1.5)
-plot(x1(6:end),x2(6:end),'bx','MarkerSize',10,'LineWidth',1.5)
+plot(x1(1:5),x2(1:5),'ro','MarkerSize',8,'LineWidth',1.5)
+plot(x1(6:end),x2(6:end),'bx','MarkerSize',8,'LineWidth',1.5)
 a2.XTick = [0 1];
 a2.YTick = [0 1];
-a2.FontWeight = 'Bold';
 a2.FontSize = 16;
 xlim([0,1])
 ylim([0,1])
