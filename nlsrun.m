@@ -7,8 +7,9 @@ Visualize results.
 
 Written by: C F Higham and D J Higham, August 2017
 Available at: https://arxiv.org/abs/1801.05894
+
 Adapted by: James Rynn
-Last edited: 18/12/2019
+Last edited: 18/03/2020
 %}
 
 

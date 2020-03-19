@@ -1,4 +1,4 @@
-function [y, dy] = activate( x, W, b, fn_type )
+function [y, dy] = activate( x, W, b, act_fn )
 
 %{
 FUNCTION DESCRIPTION:
@@ -41,7 +41,7 @@ z = W*x+b;
 
 % LINEAR:
 % -------------------------------------------------------------------------
-if(isequal(fn_type,'linear'))
+if(isequal(act_fn,'linear'))
      y = z;                % Activation
     dy = ones(size(z));    % Derivative
 % -------------------------------------------------------------------------
@@ -49,7 +49,7 @@ if(isequal(fn_type,'linear'))
 
 
 % SIGMOID:
-elseif(isequal(fn_type,'sigmoid'))
+elseif(isequal(act_fn,'sigmoid'))
       y = 1./(1+exp(-z));   % Activation
      dy = y.*(1-y);         % Derivative
 % -------------------------------------------------------------------------    
@@ -58,7 +58,7 @@ elseif(isequal(fn_type,'sigmoid'))
 
 % HYPERBOLIC TAN (Tanh):
 % -------------------------------------------------------------------------
-elseif(isequal(fn_type,'hyp_tan'))
+elseif(isequal(act_fn,'hyp_tan'))
      y = tanh(z);       % Activation
     dy = sech(z).^2;    % Derivative
 
@@ -66,7 +66,7 @@ elseif(isequal(fn_type,'hyp_tan'))
     
 % RECTIFIED LINEAR UNIT (ReLU):
 % -------------------------------------------------------------------------
-elseif(isequal(fn_type,'ReLU'))
+elseif(isequal(act_fn,'ReLU'))
     % Activation.
     y = max(0,z);   
 
@@ -78,7 +78,7 @@ elseif(isequal(fn_type,'ReLU'))
     
 % LEAKY RELU:
 % -------------------------------------------------------------------------
-elseif(isequal(fn_type,'leaky_ReLU'))
+elseif(isequal(act_fn,'leaky_ReLU'))
     % Slope parameter.
     s = 0.05;   
     
@@ -96,7 +96,7 @@ elseif(isequal(fn_type,'leaky_ReLU'))
         
 % EXPONENTIAL LINEAR UNIT (ELU):
 % -------------------------------------------------------------------------
-elseif(isequal(fn_type,'ELU'))
+elseif(isequal(act_fn,'ELU'))
     % Slope parameter.
     s = 0.05;   
     
@@ -115,5 +115,5 @@ elseif(isequal(fn_type,'ELU'))
 % OTHER (NOT SUPPORTED):
 % -------------------------------------------------------------------------
 else
-    error(['Activation function type ' fn_type ' is not supported.'])
+    error(['Activation function type ' act_fn ' is not supported.'])
 end

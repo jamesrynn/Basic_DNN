@@ -1,4 +1,4 @@
-function [t_train] = netbp_cell(data, fn_type, hid_layers, M, Niter, eta, plot_data, track_cost, RNG)
+function [Wb, t_train] = train_bp( x1, x2, y, act_fn, nlv, M, Niter, eta )
 %{
 NETBP_CELL
 ---------------------------------------------------------------------------
@@ -20,70 +20,32 @@ track_cost -- indicate whether to track cost {binary scalar},
 
 OUTPUTS:
 ---------------------------------------------------------------------------
+        Wb -- weight matrices and bias vectors {cell},
    t_train -- time taken to train network {scalar}.
 ---------------------------------------------------------------------------
 
 Written by: C F Higham and D J Higham, August 2017
 Available at: https://arxiv.org/abs/1801.05894
+
+
 Adapted by: James Rynn
-Last edited: 18/12/2019
+Last edited: 18/03/2020
 %}
 
 
-% Seed random number generator.
-rng(RNG)
 
-
-%% DATA:
-
-% Data for Figure 4/8.
-if(isequal(data,'paper10')==1)
-    x1 = [0.1,0.3,0.1,0.6,0.4,0.6,0.5,0.9,0.4,0.7];
-    x2 = [0.1,0.4,0.5,0.9,0.2,0.3,0.6,0.2,0.4,0.6];
-     y = [ones(1,5) zeros(1,5); zeros(1,5) ones(1,5)];
-
-% Data for Figure 5/9.
-elseif(isequal(data,'paper11')==1)
-    x1 = [0.1,0.3,0.1,0.6,0.4,0.6,0.5,0.9,0.4,0.7, 0.3];
-    x2 = [0.1,0.4,0.5,0.9,0.2,0.3,0.6,0.2,0.4,0.6, 0.7];
-     y = [ones(1,5) zeros(1,6); zeros(1,5) ones(1,6)];
-end
+%% USEFUL PARAMETERS:
 
 % Number of data points.
 N  = length(x1);
 
 
-
-%% DEFINE NET:
-
-% Number of neurons at each layer.
-% N.B. data and output are each dimension 2.
-nlv = [2, hid_layers, 2];
-
-
-
-%% PLOT DATA:
-
-if(plot_data == 1)
-    figure
-    a1 = subplot(1,1,1);
-    plot(x1(1:5),x2(1:5),'ro','MarkerSize',12,'LineWidth',4)
-    hold on
-    plot(x1(6:N),x2(6:N),'bx','MarkerSize',12,'LineWidth',4)
-    a1.XTick = [0 1];
-    a1.YTick = [0 1];
-    a1.FontWeight = 'Bold';
-    a1.FontSize = 16;
-    xlim([0,1])
-    ylim([0,1])
-end
-
-
-
-%% WEIGHTS AND BIASES:
-
 % Number of layers (including input).
 L = length(nlv);
+
+
+
+%% INITIALISE WEIGHTS AND BIASES:
 
 % Initialise weights and biases with random values.
 Wb = cell(L,2);
@@ -94,12 +56,11 @@ end
 
 
 
-%% FORWARD AND BACK PROPOGATION
+%% FORWARD AND BACK PROPOGATION:
 
-% Vector of costs (for plotting)
-if(track_cost == 1)
-    savecost = zeros(Niter,1);
-end
+% Initialise vector of costs (for plotting).
+savecost = zeros(Niter,1);
+
 
 % Begin timing.
 tic
@@ -128,7 +89,7 @@ for n = 1:Niter
         D = cell(L,1);
         D{1} = eye(length(x)); % un-used
         for l = 2:L
-            [act_y, act_dy] = activate(a{l-1}, Wb{l,1}, Wb{l,2}, fn_type);
+            [act_y, act_dy] = activate(a{l-1}, Wb{l,1}, Wb{l,2}, act_fn);
             a{l} = act_y;
             D{l} = diag(act_dy);
         end
@@ -172,29 +133,32 @@ for n = 1:Niter
     
     % Output progress message.
     if(floor(100*n/Niter)>floor(100*(n-1)/Niter))
-        fprintf('Progess: %u / %u iterations (%g%%). Estimated time remaining: %.3g seconds.\n', n, Niter, round(100*n/Niter), toc*((Niter/n)-1));
+        fprintf('Progess: %u / %u iterations (%g%%). Estimated time remaining: %.3g seconds. \n', n, Niter, round(100*n/Niter), toc*((Niter/n)-1));
     end
     
     
-    % Track cost if required.
-    if(track_cost == 1)
-        if(mod(n,Niter/100)==0)
-            newcost = cost(fn_type, Wb, nlv, x1,x2, y)   % Occaisonally display cost to screen.
-        else
-            newcost = cost(fn_type, Wb, nlv, x1,x2, y);
-        end
-        savecost(n) = newcost;
+    % Occaisonally display cost to screen.
+    if(mod(n,Niter/100)==0)
+        newcost = cost(act_fn, Wb, nlv, x1,x2, y)
+    else
+        newcost = cost(act_fn, Wb, nlv, x1,x2, y);
     end
+    savecost(n) = newcost;
 end
+
 
 % Time taken to train network.
 t_train = toc;
+
+% Output time.
+fprintf('Time taken to train neural network: %.2g seconds. \n', t_train)
 
 
 
 %% PLOT COST DECREASE:
 
-if(track_cost == 1)
+plot_cost = input('Plot cost? [0 (No), 1 (Yes)] (default: 0) \n');
+if(plot_cost == 1)
     figure
     semilogy([1:1e4:Niter],savecost(1:1e4:Niter),'b-','LineWidth',2)
     xlabel('Iteration Number')
@@ -204,51 +168,13 @@ end
 
 
 
-%% PLOT RESULTS:
 
-NN = 500;
-Dx = 1/NN;
-Dy = 1/NN;
-Aval = zeros(NN+1);
-Bval = zeros(NN+1);
-xvals = 0:Dx:1;
-yvals = 0:Dy:1;
-for k1 = 1:NN+1
-    xk = xvals(k1);
-    for k2 = 1:NN+1
-        yk = yvals(k2);
-        a = [xk; yk];
-        for l = 2:L
-            a = activate(a, Wb{l,1}, Wb{l,2}, fn_type);
-        end
-        
-        Aval(k2,k1) = a(1);
-        Bval(k2,k1) = a(2);
-    end
-end
-[X,Y] = meshgrid(xvals,yvals);
-
-figure(3)
-clf
-a2 = subplot(1,1,1);
-Mval = Aval>Bval;
-contourf(X,Y,Mval,[0.5 0.5])
-hold on
-colormap([1 1 1; 0.8 0.8 0.8])
-plot(x1(1:5),x2(1:5),'ro','MarkerSize',12,'LineWidth',4)
-plot(x1(6:N),x2(6:N),'bx','MarkerSize',12,'LineWidth',4)
-a2.XTick = [0 1];
-a2.YTick = [0 1];
-a2.FontWeight = 'Bold';
-a2.FontSize = 16;
-xlim([0,1])
-ylim([0,1])
 end
 
 
 
-%% COST SUBFUNCTION:
-function [costval] = cost(fn_type, Wb, nlv, x1,x2, y)
+%% COST (SUB)FUNCTION:
+function [costval] = cost(act_fn, Wb, nlv, x1,x2, y)
 
 % Number of layers
 L = length(nlv);
@@ -263,9 +189,9 @@ for i = 1:N
     x =[x1(i);x2(i)];
     a = x;
     for l = 2:L
-        a = activate(a, Wb{l,1}, Wb{l,2}, fn_type);
+        a = activate(a, Wb{l,1}, Wb{l,2}, act_fn);
     end
     costvec(i) = norm(y(:,i) - a,2);
 end
-costval = norm(costvec,2)^2;
+costval = norm(costvec)^2;
 end

@@ -108,8 +108,10 @@ end
 % N.B. Data (input layer) and output are each dimension 2.
 nlv = [2,hid_layers,size(y,1)];
 
+
 % Number of layers.
 L = length(nlv);
+
 
 % Output architecture (number of neurons at each layer).
 disp(['Number of nodes in each layer is ' mat2str(nlv)]); fprintf('\n')
@@ -162,6 +164,7 @@ rng(RNG)
 %% TRAIN NETWORK USING NON-LINEAR LEAST SQUARES:
 
 lsq_in = output('Train using non-linear least squares? [0 (No), 1 (Yes)] (default: 0) \n');
+
 if(lsq_in==1)
     
     % Number of weights at each layer.
@@ -180,7 +183,7 @@ if(lsq_in==1)
 
     % Perform optimisation.
     tic;
-    [finalP,finalerr] = lsqnonlin(@(P) cost_vecP(P, x1,x2,y, act_fn, nlv, numW, numB), Pzero);
+    [finalP,finalerr] = lsqnonlin(@(P) costvecP(P, x1,x2,y, act_fn, nlv, numW, numB), Pzero);
     t_train_lsq = toc;
 
 
@@ -207,3 +210,54 @@ end
 
 
 
+%% SUBFUNCTION 1:
+
+function Wb = params_to_weights( P, nlv, numW, numB )
+    %{
+    Convert parameters back into weights and biases.
+    %}
+
+    % Total number of weights.
+    nW = sum(numW);
+    
+    % Number of layers.
+    L = length(numW);
+    
+    % Initialise storage for weights and biases.
+    Wb = cell(L,2);
+    
+    % Counters for stepping through parameter vector.
+    countW = 0;
+    countB = nW;
+    
+    for n = 2:L
+        % Weight matrix.
+        Wb{n,1} = zeros(nlv(n),nlv(n-1));
+        Wb{n,1}(:) = P(countW+1:countW+numW(n));
+
+        % Bias vector.
+        Wb{n,2} = P(countB+1:countB+numB(n));
+
+        % Update counters.
+        countW = countW + numW(n);
+        countB = countB + numB(n);
+    end
+
+end
+
+
+
+%% SUBFUNCTION 2: COST FUNCTION:
+
+function costvec = costvecP( P, x1, x2, y, act_fn, nlv, numW, numB )
+    %{
+    Return a vector whose two-norm squared is the cost function.
+    %}
+    
+    % Retrieve weights from parameters.
+    Wb = params_to_weights(P, nlv, numW, numB);
+    
+    
+    % Return vector of costs.
+    costvec = cost_vec(x1,x2,y,act_fn,Wb,nlv);
+end
