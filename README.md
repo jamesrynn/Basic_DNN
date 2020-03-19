@@ -3,7 +3,7 @@ An adapted implementation of the MATLAB code provided in the paper 'Deep Learnin
 
 
 ## Notable Functionality Changes:
-* arbitrary number of layers with arbitrary number of nodes in each
+* arbitrary number of hidden layers with arbitrary number of nodes in each
 * choice of activation function including linear, sigmoid, ReLU, leaky ReLU and ELU
 * batch stochastic Gradient descent rather than (single sample) stochastic gradient descent
 
