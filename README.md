@@ -11,3 +11,4 @@ An adapted implementation of the MATLAB code provided in the paper 'Deep Learnin
 ## To-Do Items:
 * vectorised version (less 'readable' but quicker to perform experiments)
 * adaptive learning rate
+* arbitrary number of data points
