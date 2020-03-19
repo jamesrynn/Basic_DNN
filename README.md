@@ -6,6 +6,7 @@ An adapted implementation of the MATLAB code provided in the paper 'Deep Learnin
 * arbitrary number of hidden layers with arbitrary number of nodes in each
 * choice of activation function including linear, sigmoid, ReLU, leaky ReLU and ELU
 * batch stochastic Gradient descent rather than (single sample) stochastic gradient descent
+* parameters such as number of iterations and learning rate not fixed
 
 ## To-Do Items:
 * vectorised version (less 'readable' but quicker to perform experiments)
