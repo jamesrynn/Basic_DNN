@@ -6,15 +6,21 @@ Applied Mathematicians' (2018) by C F Higham and D J Higham - available on
 ArXiV: https://arxiv.org/abs/1801.05894
 
 
-EXAMPLE:
-To produce Figure 4:
-To produce Figure 5:
-To produce Figure 8: run with default inputs.
-To produce Figure 9: 
+Use the following inputs to replicate the stated figures. Here * indicates
+any choice of parameter is sufficient.
+
+Figure 4: 1,*,2,0,*,*,*,1,0
+Figure 5: 2,*,2,0,*,*,*,1,0
+Figures 7 & 8: 1,*,2,0,1,1e6,0.05,0,1,1
+Figure 9: 2,*,2,0,1,1e6,0.05,0,1,*
+
+NB: Subtle differences will occur in Figures 8 and 9 from these in the
+paper as we use a different function to select our random indices during
+stochastic gradient descent.
 ---------------------------------------------------------------------------
 
 Written by: James Rynn
-Last edited: 18/03/2020
+Last edited: 19/03/2020
 %}
 
 
@@ -37,9 +43,9 @@ plot_data = input('Plot data? [0 (No), 1 (Yes)] (default: 0) \n');
 if(plot_data == 1)
     figure
     a1 = subplot(1,1,1);
-    plot(x1(1:5),x2(1:5),'ro','MarkerSize',12,'LineWidth',4)
+    plot(x1(1:5),x2(1:5),'ro','MarkerSize',8,'LineWidth',1.5)
     hold on
-    plot(x1(6:N),x2(6:N),'bx','MarkerSize',12,'LineWidth',4)
+    plot(x1(6:end),x2(6:end),'bx','MarkerSize',8,'LineWidth',1.5)
     a1.XTick = [0 1];
     a1.YTick = [0 1];
     a1.FontWeight = 'Bold';
@@ -76,9 +82,9 @@ hid_layers = [];
 
 
 % First hidden layer.
-nl1_in = input('Please enter number of nodes in the first hidden layer or enter 0 for default hidden layers {layer 1: 3 nodes, layer 2: 4 nodes, layer 3: 5} (default: 0) \n');
+nl1_in = input('Please enter number of nodes in the first hidden layer or enter 0 for default net {layer 2: 2 nodes, layer 4: 3 nodes} (default: 0) \n');
 if(isempty(nl1_in) || (nl1_in==0))
-    hid_layers = [3,4,5];
+    hid_layers = [2,3];
     layer = 0;
 else
     hid_layers = [hid_layers,nl1_in];
@@ -131,9 +137,9 @@ end
 
 %% NUMBER OF ITERATIONS:
 
-Niter_in = input('Please choose number of gradient descent iterations (default: 1,000,000) \n');
+Niter_in = input('Please choose number of gradient descent iterations (default: 100,000) \n');
 if(isempty(Niter_in))
-    Niter = 1e6;
+    Niter = 1e5;
 else
     Niter = Niter_in;
 end
@@ -161,48 +167,26 @@ rng(RNG)
 
 %% TRAIN NETWORK USING NON-LINEAR LEAST SQUARES:
 
-lsq_in = output('Train using non-linear least squares? [0 (No), 1 (Yes)] (default: 0) \n');
+lsq_in = input('Train using non-linear least squares? [0 (No), 1 (Yes)] (default: 0) \n');
 if(lsq_in==1)
-    
-    % Number of weights at each layer.
-    numW = [0,nlv(1:end-1).*nlv(2:end)];
-
-    % Number of bias terms at each layer.
-    numB = [0,nlv(2:end)];
-
-    % Total number of parameters (weights + biases).
-    nP = sum(numW + numB);
-
-
-    % Initialise weights and biases.
-    Pzero = 0.5*randn(nP,1);
-
-
-    % Perform optimisation.
-    tic;
-    [finalP,finalerr] = lsqnonlin(@(P) cost_vecP(P, x1,x2,y, act_fn, nlv, numW, numB), Pzero);
-    t_train_lsq = toc;
-
-
-    % Convert back to weights/biases.
-    Wb_lsq = params_to_weights(finalP, nlv, numW, numB);
-
+    % Train using least squares.
+    [Wb_lsq, t_train_lsq] = train_lsq(x1, x2, y, act_fn, nlv);
     
     % Plot predictions/decision boundary.
-    plot_boundary(x1, x2, Wb_bp, act_fn)
+    plot_boundary(x1, x2, Wb_lsq, act_fn)
 end
 
 
 
 %% TRAIN NETWORK USING BACK PROPAGATION:
 
-bp_in = output('Train using back propogation? [0 (No), 1 (Yes)] (default: 1) \n');
+bp_in = input('Train using back propogation? [0 (No), 1 (Yes)] (default: 1) \n');
 if(bp_in==1)
+    % Train using back propogation.
     [Wb_bp, t_train_bp] = train_bp(x1, x2, y, act_fn, nlv, M, Niter, eta);
     
-    
     % Plot predictions/decision boundary.
-    plot_boundary(x1, x2, Wb_lsq, act_fn)
+    plot_boundary(x1, x2, Wb_bp, act_fn)
 end
 
 

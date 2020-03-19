@@ -3,7 +3,7 @@ function [] = plot_boundary( x1, x2, Wb, act_type )
 %{
 FUNCTION DESCRIPTION:
 ---------------------------------------------------------------------------
-Plot the decision boundary predicted by the trained NN.
+Plot the decision boundary predicted by the trained neural net.
 ---------------------------------------------------------------------------
 
 INPUTS:
@@ -18,7 +18,7 @@ Written by: C F Higham and D J Higham, August 2017
 Available at: https://arxiv.org/abs/1801.05894
 
 Adapted by: James Rynn
-Last edited: 18/03/2020
+Last edited: 19/03/2020
 %}
 
 
@@ -68,6 +68,8 @@ end
 
 
 %% PLOT PREDICTIONS:
+
+% Note, assumes first 5 entries of x1,x2 are type A and the rest are type B.
 
 figure
 clf

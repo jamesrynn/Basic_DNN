@@ -8,11 +8,15 @@ array structure Wb.
 
 INPUTS:
 ---------------------------------------------------------------------------
-P --
+    P -- weights and biases {vector},
+  nlv -- number of nodes in each layer {vector},
+ numW -- number of weights in each layer {vector},
+ numB -- number of biases in each layer {vector}.
 ---------------------------------------------------------------------------
 
 OUTPUTS:
 ---------------------------------------------------------------------------
+   Wb -- weights and biases {cell array}.
 ---------------------------------------------------------------------------
 
 Written by: James Rynn

@@ -8,7 +8,7 @@ Plot the decision boundary predicted by the trained NN.
 
 INPUTS:
 ---------------------------------------------------------------------------
-    x1,x2 -- co-ordinates of trianing data {vectors},
+    x1,x2 -- co-ordinates of training data {vectors},
        Wb -- trained weights and bias vectors {cell array},
  act_type -- type of activation function used {string}.
 ---------------------------------------------------------------------------
@@ -25,19 +25,29 @@ Last edited: 18/03/2020
 
 %% CHOOSE EVALUATION POINTS:
 
+% Number of layers.
+L = size(Wb,1);
+
+
 % Number of evaluation points.
 NN = 500;
 
-% Spac
+% Spacing between points.
 Dx = 1/NN;
 Dy = 1/NN;
 
+% Evaluation points.
 xvals = 0:Dx:1;
 yvals = 0:Dy:1;
 
+
+% Allocate storage for predictions.
 Aval = zeros(NN+1);
 Bval = zeros(NN+1);
 
+
+
+%% EVALUATE PREDICTIONS:
 
 % Loop through evaluation points.
 for k1 = 1:NN+1
@@ -56,6 +66,11 @@ end
 [X,Y] = meshgrid(xvals,yvals);
 
 
+
+%% PLOT PREDICTIONS:
+
+% Note, assumes first 
+
 figure
 clf
 a2 = subplot(1,1,1);
@@ -63,8 +78,8 @@ Mval = Aval>Bval;
 contourf(X,Y,Mval,[0.5 0.5])
 hold on
 colormap([1 1 1; 0.8 0.8 0.8])
-plot(x1(1:5),x2(1:5),'ro','MarkerSize',12,'LineWidth',4)
-plot(x1(6:N),x2(6:N),'bx','MarkerSize',12,'LineWidth',4)
+plot(x1(1:5),x2(1:5),'ro','MarkerSize',10,'LineWidth',1.5)
+plot(x1(6:end),x2(6:end),'bx','MarkerSize',10,'LineWidth',1.5)
 a2.XTick = [0 1];
 a2.YTick = [0 1];
 a2.FontWeight = 'Bold';
