@@ -45,7 +45,7 @@ b = rand(1);
 %% ACTIVATION FUNCTION:
 
 % Choose from types:  linear, sigmoid, hyp_tan, ELU, ReLU, leaky_ReLU.
-fn_type = 'hyp_tan'; 
+fn_type = 'linear'; 
 
 
 
