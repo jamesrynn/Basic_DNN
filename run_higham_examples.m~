@@ -68,8 +68,7 @@ if(act_fn_in==1)
     act_fn = 'linear';
 elseif(isempty(act_fn_in) || (act_fn_in==2))
     act_fn = 'sigmoid';
-elseif(act_fn_in==3)
-    act_fn = 'hyp_tan';
+elseif(
 elseif(act_fn_in==4)
     act_fn = 'ReLU';
 elseif(act_fn_in==5)
@@ -89,7 +88,7 @@ hid_layers = [];
 
 
 % First hidden layer.
-nl1_in = input('Please enter number of nodes in the first HIDDEN layer or enter 0 for default net {layer 2: 2 nodes, layer 4: 3 nodes} (default: 0) \n');
+nl1_in = input('Please enter number of nodes in the first hidden layer or enter 0 for default net {layer 2: 2 nodes, layer 4: 3 nodes} (default: 0) \n');
 if(isempty(nl1_in) || (nl1_in==0))
     hid_layers = [2,3];
     layer = 0;
@@ -101,7 +100,7 @@ end
 
 % Further hidden layers.
 while(layer>0)
-    nl_in = input(['Please enter number of nodes in HIDDEN layer ' num2str(layer) ', enter 0 to add no further layers (default: 0) \n']);
+    nl_in = input(['Please enter number of nodes in hidden layer ' num2str(layer) ', enter 0 to add no further layers (default: 0) \n']);
     
     % Add no new layer and break loop.
     if(isempty(nl_in) || (nl_in==0))

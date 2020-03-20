@@ -1,32 +1,18 @@
-%{
-NLSRUN
-
-Set up data for neural net test.
-Call nonlinear least squares optimization code to minimze the error.
-Visualize results.
-
-Written by: C F Higham and D J Higham, August 2017
-Available at: https://arxiv.org/abs/1801.05894
-
-Adapted by: James Rynn
-Last edited: 18/03/2020
-%}
-
-
-%% ACTIVATION FUNCTION:
-
-fn_type = 'sigmoid';
-
-
-
-%% DATA:
-
+function nlsrun
+%NLSRUN
+%
+% Set up data for neural net test
+% Call nonlinear least squares optimization code to minimze the error
+% Visualize results
+%
+% C F Higham and D J Higham, August 2017
+%
+%%%%%%% DATA %%%%%%%%%%%
+% coordinates and targets
 x1 = [0.1,0.3,0.1,0.6,0.4,0.6,0.5,0.9,0.4,0.7];
 x2 = [0.1,0.4,0.5,0.9,0.2,0.3,0.6,0.2,0.4,0.6];
 y = [ones(1,5) zeros(1,5); zeros(1,5) ones(1,5)];
 
-
-% Plot data.
 figure(1)
 clf
 a1 = subplot(1,1,1);
@@ -42,19 +28,14 @@ ylim([0,1])
 
 print -dpng pic_xy.png
 
-
-%% INITILISE WEIGHTS/BIASES AND CALL OPTIMISATION ROUTINE:
-
-% Initialise weights and biases.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Initialize weights/biases and call optimizer
 rng(5000);
 Pzero = 0.5*randn(23,1);
 
+[finalP,finalerr] = lsqnonlin(@neterr,Pzero);
 
-% Perform optimisation.
-[finalP,finalerr] = lsqnonlin(@(x) neterr(x, x1,x2,y, fn_type),Pzero);
-
-
-% Extract results into weight and bias form.
+% Check this function 
 finalW2 = zeros(2,2);
 finalW3 = zeros(3,2);
 finalW4 = zeros(2,3);
@@ -65,10 +46,7 @@ finalb2 = finalP(17:18);
 finalb3 = finalP(19:21);
 finalb4 = finalP(22:23);
 
-
-
-%% PLOT OPTIMISATION SOLUTION:
-
+% grid plot
 N = 500;
 Dx = 1/N;
 Dy = 1/N;
@@ -79,9 +57,9 @@ for k1 = 1:N+1
     for k2 = 1:N+1
         yk = yvals(k2);
         xy = [xk;yk];
-        a2 = activate(xy,finalW2,finalb2,fn_type);
-        a3 = activate(a2,finalW3,finalb3,fn_type);
-        a4 = activate(a3,finalW4,finalb4,fn_type);
+        a2 = activate(xy,finalW2,finalb2);
+        a3 = activate(a2,finalW3,finalb3);
+        a4 = activate(a3,finalW4,finalb4);
         Aval(k2,k1) = a4(1);
         Bval(k2,k1) = a4(2);
      end
@@ -107,33 +85,29 @@ ylim([0,1])
 
 print -dpng pic_bdy.png
 
+  function costvec = neterr(Pval)
+  % return a vector whose two-norm squared is the cost function  
+     disp('new call')
 
+     W2 = zeros(2,2);
+     W3 = zeros(3,2);
+     W4 = zeros(2,3);
+     W2(:) = Pval(1:4);
+     W3(:) = Pval(5:10);
+     W4(:) = Pval(11:16);
+     b2 = Pval(17:18);
+     b3 = Pval(19:21);
+     b4 = Pval(22:23);
 
-%% COST FUNCTION:
-
-% Return a vector whose two-norm squared is the cost function.
-function costvec = neterr(Pval, x1,x2,y, fn_type)
-    
-    % Output message.
-    disp('new call')
-
-    W2 = zeros(2,2);
-    W3 = zeros(3,2);
-    W4 = zeros(2,3);
-    W2(:) = Pval(1:4);
-    W3(:) = Pval(5:10);
-    W4(:) = Pval(11:16);
-    b2 = Pval(17:18);
-    b3 = Pval(19:21);
-    b4 = Pval(22:23);
-
-    costvec = zeros(10,1); 
-    for i = 1:10
-        x = [x1(i);x2(i)];
-        a2 = activate(x,W2,b2,fn_type);
-        a3 = activate(a2,W3,b3,fn_type);
-        a4 = activate(a3,W4,b4,fn_type);
-        costvec(i) = norm(y(:,i) - a4,2);
+     costvec = zeros(10,1); 
+     for i = 1:10
+         x = [x1(i);x2(i)];
+         a2 = activate(x,W2,b2);
+         a3 = activate(a2,W3,b3);
+         a4 = activate(a3,W4,b4);
+         costvec(i) = norm(y(:,i) - a4,2);
      end
+     end % of nested function
+
 end
 

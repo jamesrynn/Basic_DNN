@@ -15,10 +15,10 @@ INPUTS:
 
 
 Written by: C F Higham and D J Higham, August 2017
-Available at: https://arxiv.org/abs/1801.05894
+Available at: https://www.maths.ed.ac.uk/~dhigham/algfiles.html
 
 Adapted by: James Rynn
-Last edited: 19/03/2020
+Last edited: 20/03/2020
 %}
 
 
@@ -56,7 +56,7 @@ for k1 = 1:NN+1
         yk = yvals(k2);
         a = [xk; yk];
         for l = 2:L
-           a = activate(a, Wb{l,1}, Wb{l,2}, act_type);
+           a = my_activate(a, Wb{l,1}, Wb{l,2}, act_type);
         end
         
         Aval(k2,k1) = a(1);
@@ -77,8 +77,8 @@ Mval = Aval>Bval;
 contourf(X,Y,Mval,[0.5 0.5])
 hold on
 colormap([1 1 1; 0.8 0.8 0.8])
-plot(x1(1:5),x2(1:5),'ro','MarkerSize',8,'LineWidth',1.5)
-plot(x1(6:end),x2(6:end),'bx','MarkerSize',8,'LineWidth',1.5)
+plot(x1(1:5),x2(1:5),'ro','MarkerSize',10,'LineWidth',1.5)
+plot(x1(6:end),x2(6:end),'bx','MarkerSize',10,'LineWidth',1.5)
 a2.XTick = [0 1];
 a2.YTick = [0 1];
 a2.FontSize = 16;

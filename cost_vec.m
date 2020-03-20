@@ -36,7 +36,7 @@ costvec = zeros(nx,1);
 for i = 1:nx
     a = [x1(i);x2(i)]; % input x_i
     for l = 2:L
-        a = activate(a, Wb{l,1}, Wb{l,2}, act_fn); % activate layer l
+        a = my_activate(a, Wb{l,1}, Wb{l,2}, act_fn); % activate layer l
     end
     costvec(i) = norm(y(:,i) - a); % error for example i
 end

@@ -25,10 +25,10 @@ OUTPUTS:
 
 
 Written by: C F Higham and D J Higham, August 2017
-Available at: https://arxiv.org/abs/1801.05894
+Available at: https://www.maths.ed.ac.uk/~dhigham/algfiles.html
 
 Adapted by: James Rynn
-Last edited: 19/03/2020
+Last edited: 20/03/2020
 %}
 
 
@@ -87,7 +87,7 @@ for n = 1:Niter
         D = cell(L,1);
         D{1} = eye(length(x)); % un-used
         for l = 2:L
-            [act_y, act_dy] = activate(a{l-1}, Wb{l,1}, Wb{l,2}, act_fn);
+            [act_y, act_dy] = my_activate(a{l-1}, Wb{l,1}, Wb{l,2}, act_fn);
             a{l} = act_y;
             D{l} = diag(act_dy);
         end

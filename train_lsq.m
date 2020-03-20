@@ -22,10 +22,10 @@ OUTPUTS:
 
 
 Written by: C F Higham and D J Higham, August 2017
-Available at: https://arxiv.org/abs/1801.05894
+Available at: https://www.maths.ed.ac.uk/~dhigham/algfiles.html
 
 Adapted by: James Rynn
-Last edited: 19/03/2020
+Last edited: 20/03/2020
 %}
 
 
