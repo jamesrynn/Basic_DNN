@@ -1,1 +1,2 @@
-*.ipynb linguist-language=python
+# Remove Jupyter notebook from language stats to remove misleading weighting.
+*.ipynb linguist-documentation
