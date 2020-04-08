@@ -8,11 +8,11 @@ An adapted implementation of the MATLAB code provided in [[1]](https://epubs.sia
 * arbitrary number of hidden layers with arbitrary number of nodes in each
 * choice of activation function including linear, sigmoid, tanh, ReLU, leaky ReLU and ELU
 * batch stochastic Gradient descent rather than (single sample) stochastic gradient descent
-* parameters such as number of iterations and learning rate $\alpha$ not fixed
+* parameters such as number of iterations and learning rate not fixed
 
 ## To-Do Items:
 * (potential:) vectorised version - less 'readable' but quicker to perform experiments
-* adaptive learning rate $\alpha$
+* adaptive learning rate
 * arbitrary number of data points in training set
 
 ## Python Version Available:
