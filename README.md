@@ -16,4 +16,4 @@ An adapted implementation of the MATLAB code provided in [[1]](https://epubs.sia
 * arbitrary number of data points in training set
 
 ## Python Version Available:
-A Python implementation of this code has been written by Alex Hiles and is available at https://github.com/alexhiles/NN
+A Python implementation of this code has been written by [Alex Hiles](https://github.com/alexhiles) and is available at https://github.com/alexhiles/NN
