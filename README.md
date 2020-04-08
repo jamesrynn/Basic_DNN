@@ -1,7 +1,7 @@
 # Basic_DNN
-An adapted implementation of the MATLAB code provided in [1]. The original code provided with the paper is available at: https://www.maths.ed.ac.uk/~dhigham/algfiles.html
+An adapted implementation of the MATLAB code provided in [[1]](https://epubs.siam.org/doi/10.1137/18M1165748). The original code provided with the paper is available at: https://www.maths.ed.ac.uk/~dhigham/algfiles.html
 
-[1] Higham, C.F. and Higham, D.J., 2019. Deep Learning: An Introduction for Applied Mathematicians. SIAM Review, 61(4), pp.860-891.
+[[1] Higham, C.F. and Higham, D.J., 2019. Deep Learning: An Introduction for Applied Mathematicians. SIAM Review, 61(4), pp.860-891](https://epubs.siam.org/doi/10.1137/18M1165748).
 
 
 ## Notable Additional Functionality:
